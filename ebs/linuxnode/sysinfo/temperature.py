@@ -28,7 +28,7 @@ class TemperatureInfo(SysInfoBase):
 
     def _read_raspi_gpu_temp(self):
         def _handle_result(result):
-            return result.split('=')[1].decode().strip()
+            return result.decode().split('=')[1].strip()
         d = self._shell_execute(['vcgencmd', 'measure_temp'], _handle_result)
         return d
 
