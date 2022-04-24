@@ -5,6 +5,7 @@ import time
 from .temperature import TemperatureInfo
 from .disks import DiskInfo
 from .memory import MemoryInfo
+from .display import DisplayInfo
 from .base import SysInfoBase
 
 
@@ -20,10 +21,13 @@ class StatusInfo(SysInfoBase):
         disks.install()
         memory = MemoryInfo(self.actual)
         memory.install()
+        display = DisplayInfo(self.actual)
+        display.install()
         self._items = {
             'uptime': self._uptime,
             'disks': disks,
             'memory': memory,
+            'display': display,
             'temperature': temperature,
         }
 

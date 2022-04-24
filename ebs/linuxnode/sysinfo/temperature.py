@@ -32,4 +32,3 @@ class TemperatureInfo(SysInfoBase):
             return float(re.findall(r"[\d.]+", result.decode())[0])
         d = self._shell_execute(['vcgencmd', 'measure_temp'], _handle_result)
         return d
-

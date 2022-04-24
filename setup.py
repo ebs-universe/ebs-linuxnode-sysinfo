@@ -6,7 +6,8 @@ _requires = [
     'raspi_system>=0.1.2',  # Only used on RPi
     'ifcfg',
     'tendril-utils-core',
-    'psutil'
+    'psutil',
+    'pyedid',
 ]
 
 setuptools.setup(
