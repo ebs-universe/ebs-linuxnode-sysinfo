@@ -1,5 +1,6 @@
 
 
+import re
 import psutil
 from functools import partial
 from .base import SysInfoBase
@@ -28,7 +29,7 @@ class TemperatureInfo(SysInfoBase):
 
     def _read_raspi_gpu_temp(self):
         def _handle_result(result):
-            return result.decode().split('=')[1].strip()
+            return float(re.findall(r"[\d.]+", result.decode())[0])
         d = self._shell_execute(['vcgencmd', 'measure_temp'], _handle_result)
         return d
 
