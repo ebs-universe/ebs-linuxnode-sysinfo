@@ -1,12 +1,12 @@
 
 
 import ifcfg
-from twisted.internet.defer import succeed
+from twisted.internet.defer import inlineCallbacks
 from ebs.linuxnode.core.config import ElementSpec, ItemSpec
-from ebs.linuxnode.core.shell import BaseShellMixin
+from .base import SysInfoBase
 
 
-class WifiNetworkInfoMixin(BaseShellMixin):
+class WifiNetworkInfo(SysInfoBase):
     @property
     def wifi_ssid(self):
         def _handle_result(result):
@@ -15,16 +15,21 @@ class WifiNetworkInfoMixin(BaseShellMixin):
         return d
 
 
-class NetworkInfoMixin(WifiNetworkInfoMixin):
+class NetworkInfo(WifiNetworkInfo):
     def install(self):
-        super(NetworkInfoMixin, self).install()
+        super(NetworkInfo, self).install()
         _elements = {
             'network_interface_wifi': ElementSpec('network', 'wifi', ItemSpec(fallback='wlan0')),
             'network_interface_ethernet': ElementSpec('network', 'ethernet', ItemSpec(fallback='eth0')),
             'network_interfaces': ElementSpec('_derived', self._network_interfaces)
         }
         for name, spec in _elements.items():
-            self.config.register_element(name, spec)
+            self.actual.config.register_element(name, spec)
+
+        self._items = {
+            'info': 'network_info',
+            'interfaces': 'network_interfaces',
+        }
 
     @staticmethod
     def _network_check_interface(interface):
@@ -47,24 +52,22 @@ class NetworkInfoMixin(WifiNetworkInfoMixin):
     def _network_interfaces(self, config):
         return [config.network_interface_wifi, config.network_interface_ethernet]
 
-    @property
     def network_interfaces(self):
-        return self.config.network_interfaces
+        return self.actual.config.network_interfaces
 
-    @property
     def network_interfaces_wifi(self):
-        return [self.config.network_interface_wifi]
+        return [self.actual.config.network_interface_wifi]
 
-    @property
     def network_interfaces_ethernet(self):
-        return [self.config.network_interface_ethernet]
+        return [self.actual.config.network_interface_ethernet]
 
-    @property
+    @inlineCallbacks
     def network_info(self):
-        for interface in self.network_interfaces:
+        rv = {}
+        for interface in self.network_interfaces():
             if self._network_check_interface(interface):
-                if interface in self.network_interfaces_wifi:
-                    return self.wifi_ssid
-                else:
-                    return succeed(self._network_get_ipaddress(interface))
-        return succeed(None)
+                rv['interface'] = interface
+                rv['ipaddress'] = self._network_get_ipaddress(interface)
+                if interface in self.network_interfaces_wifi():
+                    rv['ssid'] = yield self.wifi_ssid
+        return rv

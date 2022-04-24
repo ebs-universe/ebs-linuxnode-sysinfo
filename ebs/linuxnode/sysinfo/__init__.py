@@ -1,7 +1,3 @@
 
 
-from .network import NetworkInfoMixin
-
-
-class SysinfoMixin(NetworkInfoMixin):
-    pass
+from .mixin import SysinfoMixin
