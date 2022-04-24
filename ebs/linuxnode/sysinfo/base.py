@@ -16,7 +16,7 @@ class SysInfoBase(object):
             return self._actual
 
     def _shell_execute(self, *args, **kwargs):
-        self._actual._shell_execute(*args, **kwargs)
+        return self._actual._shell_execute(*args, **kwargs)
 
     def install(self):
         pass

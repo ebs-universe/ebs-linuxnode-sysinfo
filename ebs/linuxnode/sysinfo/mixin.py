@@ -2,8 +2,11 @@
 
 from twisted.internet.defer import inlineCallbacks
 from ebs.linuxnode.core.shell import BaseShellMixin
-from .network import NetworkInfo
+
 from .base import SysInfoBase
+
+from .host import HostInfo
+from .network import NetworkInfo
 
 
 class SysinfoContainer(SysInfoBase):
@@ -14,6 +17,7 @@ class SysinfoContainer(SysInfoBase):
 
     def install(self):
         self.install_module('network', NetworkInfo)
+        self.install_module('host', HostInfo)
 
 
 class SysinfoMixin(BaseShellMixin):
