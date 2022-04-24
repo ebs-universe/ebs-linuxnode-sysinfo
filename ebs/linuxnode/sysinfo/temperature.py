@@ -20,7 +20,15 @@ class TemperatureInfo(SysInfoBase):
                 self._items[device] = SysInfoBase(self.actual)
                 for idx, zone in enumerate(zones):
                     self._items[device].items[zone.label] = partial(self._read_temp, device, idx)
+        if self.actual.config.platform == 'rpi':
+            self._items['gpu'] = self._read_raspi_gpu_temp
 
     def _read_temp(self, device, zone):
         return psutil.sensors_temperatures()[device][zone].current
+
+    def _read_raspi_gpu_temp(self):
+        def _handle_result(result):
+            return result.split('=')[1].decode().strip()
+        d = self._shell_execute(['vcgencmd', 'measure_temp'], _handle_result)
+        return d
 
