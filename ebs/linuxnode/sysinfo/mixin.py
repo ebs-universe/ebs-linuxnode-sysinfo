@@ -7,7 +7,7 @@ from .base import SysInfoBase
 
 from .host import HostInfo
 from .network import NetworkInfo
-from .temperature import TemperatureInfo
+from .status import StatusInfo
 from .app import AppInfo
 
 
@@ -21,7 +21,7 @@ class SysinfoContainer(SysInfoBase):
         self.install_module('app', AppInfo)
         self.install_module('host', HostInfo)
         self.install_module('network', NetworkInfo)
-        self.install_module('temperature', TemperatureInfo)
+        self.install_module('status', StatusInfo)
 
 
 class SysinfoMixin(BaseShellMixin):

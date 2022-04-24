@@ -18,9 +18,6 @@ class VersionsInfo(SysInfoBase):
         if package not in self._packages:
             self._packages.append(package)
 
-    def install(self):
-        super(VersionsInfo, self).install()
-
     @property
     def items(self):
         if not self._items:
