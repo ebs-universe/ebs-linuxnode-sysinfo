@@ -10,7 +10,7 @@ class WifiNetworkInfo(SysInfoBase):
     @property
     def wifi_ssid(self):
         def _handle_result(result):
-            return result.strip()
+            return result.decode().strip()
         d = self._shell_execute(['iwgetid', '-s'], _handle_result)
         return d
 

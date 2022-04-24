@@ -2,11 +2,8 @@ import setuptools
 
 _requires = [
     'setuptools-scm',
-    'raspi_system',
-
-    # Node Id
-    'netifaces',
-
+    'ebs-linuxnode-core',
+    'raspi_system>=0.1.2',
     # System
     'ifcfg',
 ]
