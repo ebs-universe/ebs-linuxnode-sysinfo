@@ -2,6 +2,7 @@
 
 from .base import SysInfoBase
 from .versions import VersionsInfo
+from .config import ConfigInfo
 
 
 class AppInfo(SysInfoBase):
@@ -15,7 +16,8 @@ class AppInfo(SysInfoBase):
         super(AppInfo, self).install()
         self._items = {'name': 'app_name',
                        'class': 'app_class',
-                       'versions': VersionsInfo(self.actual)}
+                       'versions': VersionsInfo(self.actual),
+                       'config': ConfigInfo(self.actual)}
 
     def app_name(self):
         if not self._app_name:
