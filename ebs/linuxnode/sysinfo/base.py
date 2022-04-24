@@ -9,6 +9,10 @@ class SysInfoBase(object):
         self._items = {}
 
     @property
+    def items(self):
+        return self._items
+
+    @property
     def actual(self):
         if hasattr(self._actual, '_actual'):
             return self._actual._actual
@@ -24,19 +28,27 @@ class SysInfoBase(object):
     @inlineCallbacks
     def render(self):
         rval = {}
-        for k, v in self._items.items():
-            if hasattr(v, 'render'):
+        for k, v in self.items.items():
+            if callable(v):
+                rval[k] = yield v()
+            elif hasattr(v, 'render'):
                 rval[k] = yield v.render()
+            elif not isinstance(v, str):
+                rval[k] = v
             elif hasattr(self, v):
                 if callable(getattr(self, v)):
                     rval[k] = yield getattr(self, v)()
                 else:
                     rval[k] = yield getattr(self, v)
+            else:
+                rval[k] = v
         return rval
 
     def __getattr__(self, item):
-        if item in self._items.keys():
-            v = self._items[item]
+        if item in self.items.keys():
+            v = self.items[item]
+            if callable(v):
+                return v()
             if not isinstance(v, str):
                 return v
             if callable(getattr(self, v)):

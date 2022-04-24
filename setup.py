@@ -3,9 +3,10 @@ import setuptools
 _requires = [
     'setuptools-scm',
     'ebs-linuxnode-core',
-    'raspi_system>=0.1.2',
-    # System
+    'raspi_system>=0.1.2',  # Only used on RPi
     'ifcfg',
+    'tendril-utils-core',
+    'psutil'
 ]
 
 setuptools.setup(

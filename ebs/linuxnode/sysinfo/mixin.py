@@ -7,6 +7,8 @@ from .base import SysInfoBase
 
 from .host import HostInfo
 from .network import NetworkInfo
+from .temperature import TemperatureInfo
+from .app import AppInfo
 
 
 class SysinfoContainer(SysInfoBase):
@@ -16,8 +18,10 @@ class SysinfoContainer(SysInfoBase):
         self._items[name] = m
 
     def install(self):
-        self.install_module('network', NetworkInfo)
+        self.install_module('app', AppInfo)
         self.install_module('host', HostInfo)
+        self.install_module('network', NetworkInfo)
+        self.install_module('temperature', TemperatureInfo)
 
 
 class SysinfoMixin(BaseShellMixin):
@@ -32,6 +36,8 @@ class SysinfoMixin(BaseShellMixin):
     def install(self):
         super(SysinfoMixin, self).install()
         self.sysinfo.install()
+        self.sysinfo.app.versions.register_namespace('ebs')
+        self.sysinfo.app.versions.register_namespace('tendril')
 
     @property
     @inlineCallbacks

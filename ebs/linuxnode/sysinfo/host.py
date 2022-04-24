@@ -14,6 +14,8 @@ class HostInfo(SysInfoBase):
         self._operating_system = None
         self._kernel = None
         self._architecture = None
+        self._hardware_vendor = None
+        self._hardware_model = None
 
     def install(self):
         super(HostInfo, self).install()
@@ -103,7 +105,7 @@ class HostInfo(SysInfoBase):
             yield self._hostnamectl()
         if not self._hardware_vendor and self.actual.config.platform == 'rpi':
             if hwinfo.is_pi3() or hwinfo.is_pi4():
-                return "Raspberry Pi Foundation"
+                self._hardware_vendor = "Raspberry Pi Foundation"
         return self._hardware_vendor
 
     @inlineCallbacks
@@ -112,5 +114,5 @@ class HostInfo(SysInfoBase):
             yield self._hostnamectl()
         if not self._hardware_model and self.actual.config.platform == 'rpi':
             if hwinfo.is_pi3() or hwinfo.is_pi4():
-                return "{} {}".format(hwinfo.model_string(), hwinfo.model_revcode())
+                self._hardware_model = "{} {}".format(hwinfo.model_string(), hwinfo.model_revcode())
         return self._hardware_model
