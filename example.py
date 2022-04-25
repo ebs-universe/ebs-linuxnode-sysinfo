@@ -15,7 +15,6 @@ class ExampleNode(SysinfoMixin, BaseIoTNode):
     def test_sysinfo(self):
         print("Executing Sysinfo Modules")
         sysinfo = yield self.sysinfo.render()
-        print(sysinfo)
         print(json.dumps(sysinfo, indent=4))
         print(self.network_info)
 
