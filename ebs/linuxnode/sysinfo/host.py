@@ -1,5 +1,8 @@
 
 
+import re
+import psutil
+import platform
 from raspi_system import hwinfo
 from twisted.internet.defer import inlineCallbacks
 from .base import SysInfoBase
@@ -16,6 +19,7 @@ class HostInfo(SysInfoBase):
         self._architecture = None
         self._hardware_vendor = None
         self._hardware_model = None
+        self._cpu_name = None
 
     def install(self):
         super(HostInfo, self).install()
@@ -27,7 +31,9 @@ class HostInfo(SysInfoBase):
             'kernel': 'kernel',
             'architecture': 'architecture',
             'hardware_vendor': 'hardware_vendor',
-            'hardware_model': 'hardware_model'
+            'hardware_model': 'hardware_model',
+            'cpu_name': 'cpu_name',
+            'cpu_cores': '_cpu_cores',
         }
 
     _hnc_items = {
@@ -116,3 +122,22 @@ class HostInfo(SysInfoBase):
             if hwinfo.is_pi3() or hwinfo.is_pi4():
                 self._hardware_model = "{} {}".format(hwinfo.model_string(), hwinfo.model_revcode())
         return self._hardware_model
+
+    def _cpu_cores(self):
+        return psutil.cpu_count()
+
+    @staticmethod
+    def _parse_cpuinfo(output):
+        output = output.decode()
+        for line in output.split("\n"):
+            if "model name" in line:
+                return re.sub(".*model name.*:", "", line, 1).strip()
+
+    @inlineCallbacks
+    def cpu_name(self):
+        if not self._cpu_name:
+            if platform.system() == "Windows":
+                self._cpu_name = platform.processor()
+            elif platform.system() == "Linux":
+                self._cpu_name = yield self._shell_execute(['cat', '/proc/cpuinfo'], self._parse_cpuinfo)
+        return self._cpu_name

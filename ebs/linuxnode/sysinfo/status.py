@@ -2,10 +2,11 @@
 
 import psutil
 import time
-from .temperature import TemperatureInfo
+from .cpu import CpuInfo
 from .disks import DiskInfo
 from .memory import MemoryInfo
 from .display import DisplayInfo
+from .temperature import TemperatureInfo
 from .base import SysInfoBase
 
 
@@ -23,8 +24,11 @@ class StatusInfo(SysInfoBase):
         memory.install()
         display = DisplayInfo(self.actual)
         display.install()
+        cpu = CpuInfo(self.actual)
+        cpu.install()
         self._items = {
             'uptime': self._uptime,
+            'cpu': cpu,
             'disks': disks,
             'memory': memory,
             'display': display,
