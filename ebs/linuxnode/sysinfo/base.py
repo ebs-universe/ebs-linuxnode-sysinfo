@@ -5,8 +5,13 @@ from twisted.internet.defer import inlineCallbacks
 
 class SysInfoBase(object):
     def __init__(self, actual):
+        self._log = None
         self._actual = actual
         self._items = {}
+
+    @property
+    def log(self):
+        return self._log or self._actual.log
 
     @property
     def items(self):
@@ -56,3 +61,4 @@ class SysInfoBase(object):
             else:
                 rval = getattr(self, v)
             return rval
+        raise AttributeError

@@ -1,5 +1,7 @@
 
 
+import json
+from twisted import logger
 from twisted.internet.defer import inlineCallbacks
 from ebs.linuxnode.core.shell import BaseShellMixin
 
@@ -23,6 +25,18 @@ class SysinfoContainer(SysInfoBase):
         self.install_module('network', NetworkInfo)
         self.install_module('status', StatusInfo)
 
+    @property
+    def log(self):
+        if not self._log:
+            self._log = logger.Logger(namespace="sysinfo", source=self)
+        return self._log
+
+    @inlineCallbacks
+    def write_to_log(self):
+        sysinfo = yield self.render()
+        self.log.info("System Information : {sysinfo}",
+                      sysinfo=json.dumps(sysinfo, indent=2))
+
 
 class SysinfoMixin(BaseShellMixin):
     def __init__(self, *args, **kwargs):
@@ -38,6 +52,7 @@ class SysinfoMixin(BaseShellMixin):
         self.sysinfo.install()
         self.sysinfo.app.versions.register_namespace('ebs')
         self.sysinfo.app.versions.register_namespace('tendril')
+        self.reactor.callWhenRunning(self.sysinfo.write_to_log)
 
     @property
     @inlineCallbacks
