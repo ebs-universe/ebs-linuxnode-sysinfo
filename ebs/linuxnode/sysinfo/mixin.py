@@ -50,8 +50,7 @@ class SysinfoMixin(BaseShellMixin):
     def install(self):
         super(SysinfoMixin, self).install()
         self.sysinfo.install()
-        self.sysinfo.app.versions.register_namespace('ebs')
-        self.sysinfo.app.versions.register_namespace('tendril')
+        self.sysinfo_install()
         self.reactor.callWhenRunning(self.sysinfo.write_to_log)
 
     @property
