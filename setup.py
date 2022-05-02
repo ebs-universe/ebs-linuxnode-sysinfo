@@ -2,7 +2,7 @@ import setuptools
 
 _requires = [
     'setuptools-scm',
-    'ebs-linuxnode-core',
+    'ebs-linuxnode-core>=2.4',
     'raspi_system>=0.1.2',  # Only used on RPi
     'ifcfg',
     'tendril-utils-core',
