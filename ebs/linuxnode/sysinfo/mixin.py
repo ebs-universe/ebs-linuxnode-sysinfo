@@ -60,5 +60,7 @@ class SysinfoMixin(BaseShellMixin):
         info = yield self.sysinfo.network.info
         if 'ssid' in info.keys():
             return info['ssid']
-        else:
+        elif 'ipaddress' in info.keys():
             return info['ipaddress']
+        else:
+            return "NONE"
