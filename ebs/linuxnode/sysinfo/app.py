@@ -16,6 +16,7 @@ class AppInfo(SysInfoBase):
         super(AppInfo, self).install()
         self._items = {'name': 'app_name',
                        'class': 'app_class',
+                       'nodeid': 'app_nodeid',
                        'versions': VersionsInfo(self.actual),
                        'config': ConfigInfo(self.actual)}
 
@@ -28,3 +29,6 @@ class AppInfo(SysInfoBase):
         if not self._app_class:
             self._app_class = str(self.actual.__class__)
         return self._app_class
+
+    def app_nodeid(self):
+        return self.actual.id
