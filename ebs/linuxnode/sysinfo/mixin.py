@@ -51,7 +51,10 @@ class SysinfoMixin(BaseShellMixin):
         super(SysinfoMixin, self).install()
         self.sysinfo.install()
         self.sysinfo_install()
-        self.reactor.callWhenRunning(self.sysinfo.write_to_log)
+
+    def start(self):
+        super(SysinfoMixin, self).start()
+        self.reactor.callLater(1, self.sysinfo.write_to_log)
 
     @property
     @inlineCallbacks

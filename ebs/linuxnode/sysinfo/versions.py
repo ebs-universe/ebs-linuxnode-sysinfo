@@ -1,7 +1,24 @@
 
 
+from functools import partial
+
+from twisted.internet import threads
+from twisted.internet.defer import inlineCallbacks
+
 from .base import SysInfoBase
 from tendril.utils import versions
+
+
+@inlineCallbacks
+def _get_version(package):
+    result = yield threads.deferToThread(versions.get_version, package)
+    return result
+
+
+@inlineCallbacks
+def _get_versions(namespace):
+    result = yield threads.deferToThread(versions.get_versions, namespace)
+    return {k: v for k, v in result}
 
 
 class VersionsInfo(SysInfoBase):
@@ -22,7 +39,7 @@ class VersionsInfo(SysInfoBase):
     def items(self):
         if not self._items:
             for package in self._packages:
-                self._items[package] = versions.get_version(package)
+                self._items[package] = partial(_get_version, package)
             for namespace in self._namespaces:
-                self._items[namespace] = {k: v for k, v in versions.get_versions(namespace)}
+                self._items[namespace] = partial(_get_versions, namespace)
         return self._items
