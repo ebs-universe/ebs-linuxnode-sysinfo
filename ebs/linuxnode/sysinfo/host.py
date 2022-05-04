@@ -4,7 +4,10 @@ import re
 import psutil
 import platform
 from raspi_system import hwinfo
+
+from twisted.internet import threads
 from twisted.internet.defer import inlineCallbacks
+
 from .base import SysInfoBase
 
 
@@ -123,8 +126,10 @@ class HostInfo(SysInfoBase):
                 self._hardware_model = "{} {}".format(hwinfo.model_string(), hwinfo.model_revcode())
         return self._hardware_model
 
+    @inlineCallbacks
     def _cpu_cores(self):
-        return psutil.cpu_count()
+        result = yield threads.deferToThread(psutil.cpu_count)
+        return result
 
     @staticmethod
     def _parse_cpuinfo(output):

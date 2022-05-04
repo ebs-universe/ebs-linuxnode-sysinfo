@@ -2,6 +2,10 @@
 
 import re
 import psutil
+
+from twisted.internet import threads
+from twisted.internet.defer import inlineCallbacks
+
 from functools import partial
 from .base import SysInfoBase
 
@@ -24,8 +28,10 @@ class TemperatureInfo(SysInfoBase):
         if self.actual.config.platform == 'rpi':
             self._items['gpu'] = self._read_raspi_gpu_temp
 
+    @inlineCallbacks
     def _read_temp(self, device, zone):
-        return psutil.sensors_temperatures()[device][zone].current
+        result = yield threads.deferToThread(psutil.sensors_temperatures)
+        return result[device][zone].current
 
     def _read_raspi_gpu_temp(self):
         def _handle_result(result):

@@ -9,6 +9,9 @@ from .display import DisplayInfo
 from .temperature import TemperatureInfo
 from .base import SysInfoBase
 
+from twisted.internet import threads
+from twisted.internet.defer import inlineCallbacks
+
 
 class StatusInfo(SysInfoBase):
     def __init__(self, *args):
@@ -35,5 +38,7 @@ class StatusInfo(SysInfoBase):
             'temperature': temperature,
         }
 
+    @inlineCallbacks
     def _uptime(self):
-        return time.time() - psutil.boot_time()
+        boot_time = yield threads.deferToThread(psutil.boot_time)
+        return time.time() - boot_time

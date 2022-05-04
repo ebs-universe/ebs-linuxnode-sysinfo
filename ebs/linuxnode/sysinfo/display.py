@@ -3,8 +3,10 @@
 import pyedid
 from functools import partial
 from glob import glob
-from ebs.linuxnode.core.config import ElementSpec, ItemSpec
 
+from twisted.internet import threads
+from twisted.internet.defer import inlineCallbacks
+from ebs.linuxnode.core.config import ElementSpec, ItemSpec
 from .base import SysInfoBase
 
 
@@ -35,11 +37,12 @@ class DisplayInfo(SysInfoBase):
 
         self._items['connected'] = self._display_connected
 
+    @inlineCallbacks
     def _display_edid(self, path):
         with open(path, 'rb') as f:
-            content = f.read()
+            content = yield threads.deferToThread(f.read)
         try:
-            edid_info = pyedid.parse_edid(content)
+            edid_info = yield threads.deferToThread(pyedid.parse_edid, content)
             rv = {
                 'detected': True, 'serial': edid_info.serial,
                 'product_id': edid_info.product_id, 'manufacturer_id': edid_info.manufacturer_id,
@@ -50,9 +53,10 @@ class DisplayInfo(SysInfoBase):
         except ValueError:
             return {'detected': False}
 
+    @inlineCallbacks
     def _display_connected(self):
         for name in self._names:
-            info = getattr(self, name)
+            info = yield getattr(self, name)
             if info['detected']:
                 return True
         else:

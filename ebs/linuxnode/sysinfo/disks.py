@@ -2,6 +2,8 @@
 
 import psutil
 from psutil._common import bytes2human
+from twisted.internet import threads
+from twisted.internet.defer import inlineCallbacks
 from .base import SysInfoBase
 
 
@@ -16,8 +18,12 @@ class DiskInfo(SysInfoBase):
             'free': self._free
         }
 
+    @inlineCallbacks
     def _capacity(self):
-        return bytes2human(psutil.disk_usage('/').total)
+        result = yield threads.deferToThread(psutil.disk_usage, '/')
+        return bytes2human(result.total)
 
+    @inlineCallbacks
     def _free(self):
-        return bytes2human(psutil.disk_usage('/').free)
+        result = yield threads.deferToThread(psutil.disk_usage, '/')
+        return bytes2human(result.free)
