@@ -35,7 +35,7 @@ class NetworkInfo(WifiNetworkInfo):
     def _network_check_interface(interface):
         if_spec = ifcfg.interfaces().get(interface, None)
         if not if_spec:
-            return
+            return False
         if_flags = if_spec['flags'].split('<')[1].split('>')[0].split(',')
         if "UP" in if_flags and "RUNNING" in if_flags:
             return True
@@ -46,7 +46,7 @@ class NetworkInfo(WifiNetworkInfo):
     def _network_get_ipaddress(interface):
         if_spec = ifcfg.interfaces().get(interface, None)
         if not if_spec:
-            return
+            return None
         return if_spec['inet']
 
     def _network_interfaces(self, config):
