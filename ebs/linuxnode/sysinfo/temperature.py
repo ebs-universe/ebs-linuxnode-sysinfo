@@ -14,6 +14,7 @@ class TemperatureInfo(SysInfoBase):
 
     _cpu_sensor_candidates = [
         'cpu',
+        'cpu_thermal',
         'k10temp',
         'coretemp:Package id 0',
     ]
