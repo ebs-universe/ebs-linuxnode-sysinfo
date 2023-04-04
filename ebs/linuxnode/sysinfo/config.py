@@ -11,5 +11,5 @@ class ConfigInfo(SysInfoBase):
     def items(self):
         rv = {}
         for key in self.actual.config._elements.keys():
-            rv[key] = getattr(self.actual.config, key)
+            rv[key] = self.actual.config.scrubbed_value(key)
         return rv
