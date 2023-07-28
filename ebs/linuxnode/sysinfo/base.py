@@ -7,6 +7,7 @@ class SysInfoBase(object):
     def __init__(self, actual):
         self._log = None
         self._actual = actual
+        self._post_read = None
         self._items = {}
 
     @property
@@ -47,6 +48,8 @@ class SysInfoBase(object):
                     rval[k] = yield getattr(self, v)
             else:
                 rval[k] = v
+        if self._post_read:
+            self._post_read()
         return rval
 
     def __getattr__(self, item):
